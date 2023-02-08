@@ -1,0 +1,131 @@
+@import url("https://fonts.googleapis.com/css2?family=Marck+Script&family=Roboto:wght@300;400;500&display=swap");
+
+#app {
+  font-family: "Roboto", sans-serif;
+}
+
+body {
+  margin: 0 auto;
+  color: rgb(76, 76, 76);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "Marck Script", cursive;
+  margin: 0;
+  color: rgb(76, 76, 76);
+}
+
+h3 {
+  font-size: 2.2rem;
+  margin: 1rem 0;
+}
+
+ul {
+  margin: 0;
+  padding: 0;
+}
+
+li,
+a {
+  color: inherit;
+  text-decoration: none;
+  list-style: none;
+}
+
+img {
+  max-width: 100%;
+}
+
+.link {
+  margin: 1rem;
+}
+
+.link:hover {
+  color: rgb(161, 132, 132);
+}
+
+button {
+  background: none;
+  border: 0.5px solid rgb(202, 202, 202);
+  border-radius: 0.3rem;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+}
+
+.btn_remove {
+  color: rgb(180, 67, 67);
+  border: none;
+  font-size: 1.2rem;
+}
+
+table {
+  border-radius: 0.3rem;
+  text-align: left;
+  width: 100%;
+}
+
+th,
+td {
+  padding: 0.6rem;
+}
+
+form {
+  padding: 0 1rem;
+  border-radius: 0.3rem;
+}
+
+.form_group {
+  padding: 1rem 0;
+  display: flex;
+  align-items: center;
+  border-bottom: 0.5px solid rgb(202, 202, 202);
+}
+
+.form_group:last-of-type {
+  border-bottom: none;
+}
+
+label {
+  flex: 1;
+}
+
+input,
+textarea {
+  flex: 3;
+  border: 0.5px solid rgb(202, 202, 202);
+  border-radius: 0.3rem;
+  padding: 0.6rem;
+  font-family: inherit;
+  color: inherit;
+}
+
+.admin_section {
+  flex: 1;
+  margin: 1rem;
+  background: #faf1e2;
+  border-radius: 0.3rem;
+}
+
+.admin_section_header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+}
+
+.info_block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem;
+  background: #ffeed2;
+}
+
+.toggleBtn {
+  cursor: pointer;
+}
