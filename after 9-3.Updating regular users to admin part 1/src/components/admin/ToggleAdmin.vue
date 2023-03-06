@@ -11,10 +11,10 @@ const email = ref("");
         showToggleAdmin ? "hide" : "show"
       }}</small>
     </header>
-    <div v-show="showToggleAdmin">
+    <div v-if="showToggleAdmin">
       <form>
         <div class="form_group">
-          <label for="email">Find user by email:</label>
+          <label for="email">Find user by email</label>
           <input
             type="email"
             id="email"

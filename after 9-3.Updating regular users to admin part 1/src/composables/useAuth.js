@@ -5,10 +5,9 @@ import {
   signOut,
   onAuthStateChanged,
 } from "firebase/auth";
-import { addDoc, getDocs, query, where } from "firebase/firestore";
-import { watch, ref } from "vue";
-import { dbUsersRef } from "../firebase";
-
+import { ref } from "vue";
+import { doc, setDoc, getDoc, getDocs, query, where } from "firebase/firestore";
+import { db, dbUsersRef } from "../firebase";
 export default function useAuth() {
   const auth = getAuth();
   const errorMessage = ref("");
@@ -17,6 +16,36 @@ export default function useAuth() {
   const userIsAdmin = ref(false);
   const toggleAdminMessage = ref("");
   const selectedUser = ref(null);
+
+  async function findUser(userEmail) {
+    try {
+      toggleAdminMessage.value = "";
+      if (!userIsAdmin.value) return;
+      const queryData = query(dbUsersRef, where("email", "==", userEmail));
+      const user = await getDocs(queryData);
+      const userObject = {
+        id: user.docs[0].id,
+        email: user.docs[0].data().email,
+        isAdmin: user.docs[0].data().isAdmin,
+      };
+      selectedUser.value = userObject;
+    } catch (error) {
+      selectedUser.value = null;
+      toggleAdminMessage.value = "No user found with that email...";
+    }
+  }
+
+  async function checkAdminRole() {
+    if (userData.value?.uid) {
+      const docRef = doc(dbUsersRef, userData.value.uid);
+      const user = await getDoc(docRef);
+      if (user.exists() && user.data().isAdmin) {
+        userIsAdmin.value = true;
+      } else {
+        userIsAdmin.value = false;
+      }
+    }
+  }
 
   function toggleModal() {
     signInModalOpen.value = !signInModalOpen.value;
@@ -29,14 +58,16 @@ export default function useAuth() {
         email,
         password
       );
+
       const userObject = {
         createdAt: new Date(),
-        linkedId: user.uid,
         email: user.email,
         isAdmin: false,
       };
-      await addDoc(dbUsersRef, userObject);
+      const newDoc = doc(db, "users", user.uid);
+      await setDoc(newDoc, userObject);
       errorMessage.value = "";
+      signInModalOpen.value = false;
     } catch (error) {
       switch (error.code) {
         case "auth/email-already-in-use":
@@ -47,6 +78,7 @@ export default function useAuth() {
           errorMessage.value = "password should be at least 6 characters long";
           break;
         default:
+          console.log(error);
           errorMessage.value = "sorry, there was an unexpected error";
       }
     }
@@ -84,48 +116,12 @@ export default function useAuth() {
   onAuthStateChanged(auth, function (user) {
     if (user) {
       userData.value = user;
-      getAdminUsers();
+      checkAdminRole();
     } else {
       userData.value = null;
       userIsAdmin.value = false;
     }
   });
-
-  async function getAdminUsers() {
-    const queryData = query(
-      dbUsersRef,
-      where("isAdmin", "==", true),
-      where("linkedId", "==", userData.value?.uid)
-    );
-    const docs = await getDocs(queryData);
-    docs.forEach(function (doc) {
-      if (doc.data()) {
-        userIsAdmin.value = true;
-      } else {
-        userIsAdmin.value = false;
-      }
-    });
-  }
-  watch(userData, getAdminUsers);
-
-  async function findUser(userEmail) {
-    try {
-      toggleAdminMessage.value = "";
-      if (!userIsAdmin.value) return;
-      const queryData = query(dbUsersRef, where("email", "==", userEmail));
-      const user = await getDocs(queryData);
-      const userObject = {
-        id: user.docs[0].id,
-        email: user.docs[0].data().email,
-        isAdmin: user.docs[0].data().isAdmin,
-      };
-      selectedUser.value = userObject;
-    } catch (error) {
-      selectedUser.value = null;
-      toggleAdminMessage.value = "No user found with that email...";
-    }
-  }
-
   return {
     signUp,
     errorMessage,

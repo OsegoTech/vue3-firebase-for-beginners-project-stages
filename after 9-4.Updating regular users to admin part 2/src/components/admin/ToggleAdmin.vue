@@ -1,6 +1,6 @@
 <script setup>
-import useAuth from "@/composables/useAuth";
 import { ref } from "vue";
+import useAuth from "@/composables/useAuth";
 const showToggleAdmin = ref(true);
 const email = ref("");
 const { findUser, selectedUser, toggleAdminMessage, toggleAdmin } = useAuth();
@@ -13,10 +13,10 @@ const { findUser, selectedUser, toggleAdminMessage, toggleAdmin } = useAuth();
         showToggleAdmin ? "hide" : "show"
       }}</small>
     </header>
-    <div v-show="showToggleAdmin">
+    <div v-if="showToggleAdmin">
       <form>
         <div class="form_group">
-          <label for="email">Find user by email:</label>
+          <label for="email">Find user by email</label>
           <input
             type="email"
             id="email"
@@ -34,7 +34,9 @@ const { findUser, selectedUser, toggleAdminMessage, toggleAdmin } = useAuth();
           User {{ selectedUser.email }} is currently set as
           {{ selectedUser.isAdmin ? "admin" : "not admin" }}
         </p>
-        <button @click.prevent="toggleAdmin">Click here to toggle admin</button>
+        <button @click.prevent="toggleAdmin">
+          Click here to toggle admin setting
+        </button>
       </div>
     </div>
   </section>

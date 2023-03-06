@@ -5,10 +5,9 @@ import {
   signOut,
   onAuthStateChanged,
 } from "firebase/auth";
-import { addDoc } from "firebase/firestore";
 import { ref } from "vue";
-import { dbUsersRef } from "../firebase";
-
+import { doc, setDoc } from "firebase/firestore";
+import { db } from "../firebase";
 export default function useAuth() {
   const auth = getAuth();
   const errorMessage = ref("");
@@ -26,14 +25,16 @@ export default function useAuth() {
         email,
         password
       );
+
       const userObject = {
         createdAt: new Date(),
-        linkedId: user.uid,
         email: user.email,
         isAdmin: false,
       };
-      await addDoc(dbUsersRef, userObject);
+      const newDoc = doc(db, "users", user.uid);
+      await setDoc(newDoc, userObject);
       errorMessage.value = "";
+      signInModalOpen.value = false;
     } catch (error) {
       switch (error.code) {
         case "auth/email-already-in-use":
@@ -44,6 +45,7 @@ export default function useAuth() {
           errorMessage.value = "password should be at least 6 characters long";
           break;
         default:
+          console.log(error);
           errorMessage.value = "sorry, there was an unexpected error";
       }
     }
